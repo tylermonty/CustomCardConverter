@@ -7,7 +7,7 @@ import pandas as pd
 import json
 
 # Read in CSV
-df = pd.read_csv('filename.csv')
+df = pd.read_csv('SecretSauceNoPeeking2.csv')
 
 # Grab only custom cards
 custom_cards = df[df['Image URL'].notnull()]
@@ -24,10 +24,13 @@ types = custom_cards['type'].str.split(" - ", expand=True)
 # Set type
 custom_cards['type'] = types[0]
 
-# Set subtypes as list
-custom_cards['subtype'] = types[1].str.split(" ")
+# If there are subtypes, set subtypes as list. Else, set subtype as type
+if len(types.columns) > 1:
+    custom_cards['subtype'] = types[1].str.split(" ")
+else:
+    custom_cards['subtype'] = custom_cards['type']
 
-# If no subtypes specified, set subtype equal to type
+# If no subtypes specified, set subtype equal to type (if some cards have subtypes and others do not)
 custom_cards.loc[custom_cards['subtype'].isnull(), 'subtype'] = types[0].str.split("\n")
 
 # Grab only image_uris
